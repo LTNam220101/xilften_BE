@@ -105,10 +105,10 @@ exports.deleteMovie = (req, res, next) => {
   );
 };
 
-exports.updateRating = (movie, rating) => {
-  console.log(movie);
-  console.log(mongoose.Types.ObjectId(movie));
-  Movie.findById(movie, (err, movie) => {
+exports.updateRating = (req, res) => {
+  console.log("rating" + req.params.id);
+  console.log(mongoose.Types.ObjectId(req.params.id));
+  Movie.findById(req.params.id, (err, movie) => {
     if (err) {
       console.log("failed");
     } else {
@@ -119,16 +119,55 @@ exports.updateRating = (movie, rating) => {
         {
           ratingQuantity: quantity + 1,
           ratingAverage: (
-            (average * quantity + rating) /
+            (average * quantity + req.body.rating) /
             (quantity + 1)
           ).toFixed(1),
         },
         { new: true },
         (err) => {
           if (err) {
-            console.log(err);
+            res.json({
+              result: "failed",
+              message: err.message,
+            });
           } else {
-            console.log("ok");
+            res.json({
+              result: "successed",
+              data: movie,
+              message: "Success",
+            });
+          }
+        }
+      );
+    }
+  });
+};
+
+exports.updateCount = (req, res) => {
+  console.log(req);
+  console.log(mongoose.Types.ObjectId(req.params.id));
+  Movie.findById(req.params.id, (err, movie) => {
+    if (err) {
+      console.log("failed");
+    } else {
+      const views = movie.views;
+      Movie.findByIdAndUpdate(
+        movie,
+        {
+          views: views + 1,
+        },
+        { new: true },
+        (err) => {
+          if (err) {
+            res.json({
+              result: "failed",
+              message: err.message,
+            });
+          } else {
+            res.json({
+              result: "successed",
+              message: "Success",
+            });
           }
         }
       );
@@ -156,7 +195,8 @@ exports.getListMoviesById = (req, res, next) => {
 };
 
 exports.getListMovies = (req, res, next) => {
-  Movie.find({ name: { $in: req } }).exec((err, list) => {
+  console.log(req)
+  Movie.find({ _id: { $in: req.body.history } }).exec((err, list) => {
     if (err) {
       res.json({
         result: "failed",
@@ -174,7 +214,13 @@ exports.getListMovies = (req, res, next) => {
 };
 
 exports.getAllMovies = (req, res, next) => {
-  Movie.find({})
+  const query = req.query.name
+  const regex = new RegExp(query, "i")
+  Movie.find({ $or : [ 
+    {name: { $regex: regex }},
+    {actors: { $regex: regex }},
+    {categories: { $regex: regex }},
+  ]})
     .limit(100)
     .exec((err, list) => {
       if (err) {

@@ -5,8 +5,8 @@ const RatingSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  movie: { type: mongoose.Schema.Types.ObjectId, ref: "Movie" },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  id: { type: mongoose.Schema.Types.ObjectId, ref: "Movie" },
+  email: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
 const Rating = mongoose.model("Rating", RatingSchema);

@@ -5,10 +5,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  password: {
-    type: String,
-    required: true,
-  },
   email: {
     type: String,
     required: true,
@@ -20,8 +16,18 @@ const UserSchema = new mongoose.Schema({
     default: "user",
   },
   history: [{ type: mongoose.Schema.Types.ObjectId, ref: "Movie" }],
+
+  deleteAt: { type: Date, default: Date.now},
+  createAt: { type: Date, default: Date.now},
+  updateAt: { type: Date, default: Date.now},
+  action: { type: String, default: 'System'},
+  
+  loginAt: { type: Date, default: Date.now},
+  logoutAt: { type: Date, default: Date.now},
+  action: { type: String, default: 'System'},
 });
 
+UserSchema.index({ email: 1}) //Nơi đánh index
 const User = mongoose.model("User", UserSchema);
 
 module.exports = User;

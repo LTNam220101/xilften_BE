@@ -4,7 +4,7 @@ const RatingController = require('../controllers/Rating');
 
 /* GET Ratings listing. */
 router.post('/', RatingController.create);
-router.get('/', RatingController.find);
+router.post('/get_rating', RatingController.find);
 // router.put('/', RatingController.update);
 // router.delete('/', RatingController.deleteRating);
 

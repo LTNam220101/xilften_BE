@@ -19,6 +19,9 @@ const directorRouter = require("./routes/director");
 
 const Movie = require("./models/movie");
 
+const index = require('./controllers/')
+const middleware = require('./utils/middeware')
+
 const app = express();
 app.use(cors());
 
@@ -42,6 +45,8 @@ app.use("/rating", ratingRouter);
 app.use("/shelf", shelfRouter);
 app.use("/actor", actorRouter);
 app.use("/director", directorRouter);
+app.route('/login').get(index.login).post(index.login)
+app.route('/profile').post([middleware.checkLogin, index.profile])
 
 // app.use(crud("/movie", sequelizeCrud(Movie)));
 

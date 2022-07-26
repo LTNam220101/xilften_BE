@@ -1,5 +1,6 @@
 const Rating = require("../models/rating");
 const MovieController = require("./Movie");
+const Movie = require("../models/movie");
 const mongoose = require("mongoose");
 
 exports.create = (req, res, next) => {
@@ -7,58 +8,70 @@ exports.create = (req, res, next) => {
     res.status(400).send("Content is required");
     return;
   }
-  const rating = new Rating({ ...req.body });
+  const rating = new Rating({ ...req.body.rating });
 
   rating
     .save(rating)
     .then((data) => {
-      MovieController.updateRating(data.movie, data.rating);
+      console.log(data)
+      Movie.findById(data.id, (err, movie) => {
+        if (err) {
+          console.log("failed");
+        } else {
+          const quantity = movie.ratingQuantity;
+          const average = movie.ratingAverage;
+          Movie.findByIdAndUpdate(
+            movie,
+            {
+              ratingQuantity: quantity + 1,
+              ratingAverage: (
+                (average * quantity + data.rating) /
+                (quantity + 1)
+              ).toFixed(1),
+            },
+            { new: true },
+            (err) => {
+              if (err) {
+                res.json({
+                  result: "failed",
+                  message: err.message,
+                });
+              } else {
+                res.json({
+                  result: "successed",
+                  data: movie,
+                  message: "Success",
+                });
+              }
+            }
+          );
+        }
+      });
     })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send(err.message);
-    });
-};
+  }
 
 exports.find = (req, res, next) => {
-    Rating.findById(mongoose.Types.ObjectId(req.query.id), (err, rating) => {
-    console.log(req.query.id);
-    if (err) {
+    const { id, email } = req.body
+    try{
+      Rating.findOne({ id, email }).exec((err, rating) => {
+      console.log(req.body);
+      if (err) {
+        res.json({
+          result: "failed",
+          message: err.message,
+        });
+      } else {
+        res.json({
+          result: "successed",
+          data: rating,
+          message: "Success",
+        });
+      }
+    });
+    } catch (err) {
       res.json({
         result: "failed",
-        message: err.message,
-      });
-    } else {
-      res.json({
-        result: "successed",
-        data: rating,
-        message: "Success",
+        message: err,
       });
     }
-  });
 };
-
-// exports.update = (req, res, next) => {
-//   const updateData = { ...req.body };
-//   Rating.findByIdAndUpdate(
-//     mongoose.Types.ObjectId(req.query.id),
-//     updateData,
-//     { new: true },
-//     (err, rating) => {
-//       if (err) {
-//         res.json({
-//           result: "failed",
-//           message: err.message,
-//         });
-//       } else {
-//         res.json({
-//           result: "successed",
-//           data: rating,
-//           message: "Success",
-//         });
-//       }
-//     }
-//   );
-// };
