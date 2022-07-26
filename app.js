@@ -26,6 +26,8 @@ const middleware = require('./utils/middeware')
 const app = express();
 app.use(cors());
 
+const router = express.Router()
+
 connectDB();
 
 // view engine setup
@@ -69,4 +71,4 @@ app.use(function (err, req, res, next) {
 
 app.use('/.netlify.functions/api', router)
 
-module.exports.handler = serverless(app);
+module.exports = app;
