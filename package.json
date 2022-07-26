@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www",
-    "build": "nodemon ./bin/www"
+    "start": "node_modules/.bin/netlify-lambda serve .",
+    "build": "node_modules/.bin/netlify-lambda build ."
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
