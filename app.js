@@ -5,6 +5,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const connectDB = require("./database/connection");
+const serverless = require("serverless-http")
 // import crud, { sequelizeCrud } from 'express-sequelize-crud'
 const crud = require("express-crud-router");
 const sequelizeCrud = require("express-crud-router-sequelize-v6-connector/lib/index.js");
@@ -66,4 +67,6 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-module.exports = app;
+app.use('/.netlify.functions/api', router)
+
+module.exports.handler = serverless(app);

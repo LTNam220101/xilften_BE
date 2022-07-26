@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "./node_modules/.bin/netlify-lambda serve src",
+    "build": "./node_modules/.bin/netlify-lambda build src"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -17,6 +18,8 @@
     "md5": "^2.3.0",
     "mongoose": "^6.3.3",
     "morgan": "~1.9.1",
-    "nodemon": "^2.0.16"
+    "netlify-lambda": "^2.0.15",
+    "nodemon": "^2.0.16",
+    "serverless-http": "^3.0.1"
   }
 }
