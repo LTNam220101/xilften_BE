@@ -69,6 +69,4 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-app.use('/.netlify.functions/api', router)
-
 module.exports.handler = serverless(app);
